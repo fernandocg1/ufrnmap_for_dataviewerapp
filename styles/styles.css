@@ -1,0 +1,107 @@
+:root {
+    --bg-page: #0d1626;
+    --toolbar-bg: #142238;
+    --toolbar-border: #2b4570;
+    --btn-bg: #1e3150;
+    --btn-text: #e6f0ff;
+    --btn-active-bg: #264573;
+    --btn-active-border: #33b5ff;
+    --hint-bg: rgba(16, 28, 48, .92);
+    --bubble-bg: #192b47;
+    --bubble-text: #eef5ff;
+    --bubble-border: #3c649f;
+    --popup-bg: #16263f;
+    --popup-text: #e6f0ff;
+    --popup-border: #2e4d7d;
+    --input-bg: #0f1b2e;
+    --attr-bg: rgba(13, 22, 38, .85);
+    --attr-text: #9bb6de;
+}
+body.light {
+    --bg-page: #eef1ee;
+    --toolbar-bg: #ffffff;
+    --toolbar-border: #d5ddd8;
+    --btn-bg: #f1f4f2;
+    --btn-text: #222a26;
+    --btn-active-bg: #e2ecf8;
+    --btn-active-border: #1a73e8;
+    --hint-bg: rgba(30, 38, 34, .88);
+    --bubble-bg: #ffffff;
+    --bubble-text: #222222;
+    --bubble-border: rgba(0, 0, 0, .18);
+    --popup-bg: #ffffff;
+    --popup-text: #222222;
+    --popup-border: #d5ddd8;
+    --input-bg: #f7f9f8;
+    --attr-bg: rgba(255, 255, 255, .85);
+    --attr-text: #44554c;
+}
+html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; background: var(--bg-page); }
+#map { position: absolute; inset: 0; }
+
+#theme-toggle {
+    position: absolute; z-index: 10; top: 12px; left: 12px;
+    border: 1px solid var(--toolbar-border); background: var(--toolbar-bg); color: var(--btn-text);
+    border-radius: 10px; padding: 8px 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+
+#toolbar {
+    position: absolute; z-index: 10; left: 50%; bottom: 20px;
+    transform: translateX(-50%);
+    display: flex; gap: 8px; padding: 8px;
+    background: var(--toolbar-bg); border: 1px solid var(--toolbar-border); border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.35);
+}
+#toolbar button {
+    border: 2px solid transparent; background: var(--btn-bg); color: var(--btn-text);
+    border-radius: 10px; padding: 8px 10px; font-size: 14px; cursor: pointer;
+}
+#toolbar button.active { border-color: var(--btn-active-border); background: var(--btn-active-bg); }
+
+#hint {
+    position: absolute; z-index: 10; top: 10px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--hint-bg); color: #fff;
+    border: 1px solid var(--toolbar-border);
+    padding: 6px 12px; border-radius: 8px; font-size: 13px; display: none;
+}
+.alert-marker { font-size: 28px; cursor: pointer; }
+.alert-marker-icon { display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5)); }
+.alert-bubble {
+    position: absolute; bottom: 100%; left: 50%;
+    transform: translateX(-50%); margin-bottom: 6px;
+    background: var(--bubble-bg); color: var(--bubble-text); font-size: 12px; line-height: 1.3;
+    padding: 5px 9px; border-radius: 9px;
+    box-shadow: 0 3px 8px rgba(0,0,0,.35); border: 1px solid var(--bubble-border);
+    max-width: 160px; width: max-content; word-break: break-word;
+    text-align: center; display: none;
+}
+.alert-bubble.visible { display: block; }
+.alert-bubble::after {
+    content: ''; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: var(--bubble-bg);
+}
+.maplibregl-popup-content {
+    background: var(--popup-bg); color: var(--popup-text);
+    border: 1px solid var(--popup-border); border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.4);
+}
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--popup-bg); }
+.maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: var(--popup-bg); }
+.maplibregl-popup-close-button { color: var(--popup-text); }
+.maplibregl-popup-content textarea {
+    background: var(--input-bg); color: var(--popup-text);
+    border: 1px solid var(--popup-border); border-radius: 6px; padding: 4px; box-sizing: border-box;
+}
+.maplibregl-popup-content button {
+    background: #25426e; color: #fff; border: 1px solid #3c649f;
+    border-radius: 6px; padding: 4px 10px; margin-right: 4px; cursor: pointer;
+}
+.maplibregl-popup-content button[data-action="remove"] { background: #6e2532; border-color: #9f3c4d; }
+#attribution {
+    position: absolute; bottom: 0; left: 0; z-index: 5;
+    background: var(--attr-bg); color: var(--attr-text); font-size: 11px; padding: 2px 6px;
+}
+#attribution a { color: var(--attr-text); }

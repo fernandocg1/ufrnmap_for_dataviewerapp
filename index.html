@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UFRN Mapa</title>
+
+    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <link href="styles/styles.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+</head>
+<body>
+    <div id="map"></div>
+    <button id="theme-toggle" title="Alternar tema claro/escuro">☀️ Claro</button>
+    <div id="hint"></div>
+
+    <div id="toolbar">
+        <button data-type="obra">🚧 Obra</button>
+        <button data-type="acidente">💥 Acidente</button>
+        <button data-type="incendio">🔥 Incêndio</button>
+        <button data-type="perigo">⚠️ Perigo</button>
+        <button data-type="outros">🗒️ Outros</button>
+    </div>
+
+    <div id="attribution">
+        <a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a>
+        <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
