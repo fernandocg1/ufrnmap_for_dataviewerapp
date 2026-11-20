@@ -61,7 +61,7 @@ const map = new maplibregl.Map({
     center: [-35.2020, -5.8388],
     zoom: 15.9,
     minZoom: 14.8,
-    maxZoom: 19,
+    maxZoom: 20,
     maxBounds: [[-35.2140, -5.8465], [-35.1930, -5.8300]]
 });
 
@@ -275,4 +275,159 @@ map.on('click', (e) => {
     saveAlerts([...loadAlerts(), aviso]);
     addMarker(aviso);
     markers[aviso.id].togglePopup();
+});
+
+// Prédios, centros, setores, laboratórios e locais mapeados dentro da UFRN (com siglas e apelidos)
+const UFRN_PLACES = [
+    ["588 - Expresso C&T",-35.202805,-5.840734], ["Anel Viário da UFRN",-35.209058,-5.838112], ["Anfiteatro",-35.210188,-5.837823],
+    ["Anfiteatros do CCET",-35.199375,-5.841493], ["Avenida Doutor Solon de Miranda Galvão",-35.195947,-5.843755], ["Avenida Odilon Gomes de Lima",-35.196421,-5.844211],
+    ["Avenida Passeio dos Girassóis",-35.200958,-5.841604], ["Avenida Santos Dumont",-35.203889,-5.841262], ["Avenida Senador Salgado Filho",-35.211908,-5.83426],
+    ["Banco do Brasil",-35.199881,-5.839043], ["Berlim",-35.199259,-5.837785], ["Biblioteca Central Zila Mamede (BCZM)",-35.199242,-5.839701],
+    ["Biblioteca Setorial da Escola de Música",-35.206635,-5.837496], ["Biblioteca Setorial do CB",-35.201932,-5.841852], ["Biblioteca Setorial do CCET",-35.19881,-5.840991],
+    ["Biblioteca Setorial do CCHLA",-35.198096,-5.839352], ["Biblioteca Setorial NEPSA",-35.19788,-5.837824], ["Setor 2 (Setor II / Bloco de Aulas do Setor II)",-35.196995,-5.838307],
+    ["Caixa Econômica Federal",-35.19989,-5.839076], ["Capela Ecumênica do Campus",-35.208568,-5.837188], ["CB (Centro de Biociências)",-35.201928,-5.84187],
+    ["CCET (Centro de Ciências Exatas e da Terra)",-35.198537,-5.840935], ["CCHLA UFRN (Azulão, Chichila)",-35.198139,-5.839244], ["CCSA (Centro de Ciências Socias Aplicadas)",-35.198571,-5.837892],
+    ["Centro de Convivência Djalma Marinho",-35.200048,-5.839286], ["Centro de Educação",-35.196774,-5.838707], ["Centro de Tecnologia - CT",-35.198867,-5.842767],
+    ["Comperve (Comissão Permanente do Vestibular)",-35.21167,-5.833923], ["Complexo Tecnológico de Engenharia (CTEC) (CTEC - UFRN)",-35.198011,-5.843142], ["Comunica (Superintendência de Comunicação)",-35.200637,-5.838112],
+    ["Cooperativa Cultural da UFRN",-35.200163,-5.839456], ["Coordenação de Engenharia de Computação",-35.197195,-5.84281], ["Copiadora BCZM UFRN",-35.199139,-5.840036],
+    ["Correios (Empresa Brasileira de Correios e Telégrafos)",-35.199871,-5.839026], ["DAS",-35.2109,-5.835219], ["DCA",-35.197459,-5.8429],
+    ["DDRH - Departamento de Desenvolvimento de Recursos Humanos",-35.210304,-5.835432], ["DEART - Prédio Anexo",-35.211277,-5.835303], ["DEART (Departamento de Artes, DART)",-35.211205,-5.834722],
+    ["DECOM - Departamento de Comunicação Social",-35.200635,-5.837811], ["Departamento de Arquitetura (Galinheiro, DARQ)",-35.199102,-5.842242], ["Departamento de Artes (DEART)",-35.211069,-5.835931],
+    ["Departamento de Biofísica e Farmacologia",-35.201886,-5.841499], ["Departamento de Biologia e Genética",-35.201873,-5.841316], ["Departamento de Bioquímica",-35.201871,-5.841286],
+    ["Departamento de Botânica, Ecologia e Zoologia",-35.201883,-5.841468], ["Departamento de Desenvolvimento de Recursos Humanos (DDRH)",-35.210238,-5.835701], ["Departamento de Ecologia",-35.201669,-5.8411],
+    ["Departamento de Educação Física",-35.201817,-5.836103], ["Departamento de Fisiologia",-35.201879,-5.841408], ["Departamento de Fisioterapia",-35.200282,-5.83517],
+    ["Departamento de Geologia",-35.195663,-5.8417], ["Departamento de Microbiologia e Parasitologia",-35.201877,-5.841377], ["Departamento de Morfologia",-35.201875,-5.841347],
+    ["Departamento de Nutrição",-35.202663,-5.834555], ["Departamento de Oceanografia e Limnologia",-35.201881,-5.841438], ["DFTE (Departamento de Física Teórica e Experimental)",-35.196819,-5.841652],
+    ["DIMAp",-35.198291,-5.84154], ["Diretório Central dos Estudantes (DCE)",-35.199323,-5.838193], ["DMP",-35.204563,-5.837941],
+    ["Educação Física",-35.201873,-5.836491], ["Escola de Ciência e Tecnologia (ECT)",-35.199434,-5.843426], ["Escola de Enfermagem",-35.202349,-5.834058],
+    ["Escola de Música da UFRN (EMUFRN, Escola de Música)",-35.206679,-5.83729], ["Estacionamento do CCHLA",-35.197058,-5.839387], ["Estacionamento I NTI na Rua das Engenharias",-35.197129,-5.842192],
+    ["Estacionamento II NTI na Rua das Engenharias",-35.196712,-5.842333], ["FUNPEC",-35.210863,-5.834803], ["Gabinete do Reitor",-35.201562,-5.839826],
+    ["Ginasinho",-35.199341,-5.835946], ["Ginásio da UFRN",-35.202353,-5.835231], ["INPE - Centro Regional Nordeste",-35.20786,-5.836241],
+    ["Instituto Ágora",-35.19775,-5.840312], ["Instituto do Cérebro",-35.204916,-5.833629], ["Instituto Internacional de Física",-35.195641,-5.840185],
+    ["Instituto Metrópole Digital (IMD)",-35.205354,-5.832298], ["Lab. de Física Experimental I",-35.197442,-5.841477], ["Lab. de Física Experimental II",-35.197585,-5.841477],
+    ["Lab. de Química II",-35.199322,-5.840881], ["Labcom (Laboratório de Comunicação)",-35.200564,-5.837796], ["Laboratório de Combustíveis e Lubrificantes",-35.199171,-5.841132],
+    ["Laboratório de Computadores",-35.197429,-5.841833], ["Laboratório de Física do Petróleo",-35.197054,-5.841887], ["Laboratório de Geologia e Geofísica do Petróleo",-35.195502,-5.840786],
+    ["Laboratório de Química I",-35.198269,-5.840384], ["Laboratório de Recursos Hídricos e Saneamento Ambiental (LARHISA)",-35.198094,-5.842334], ["Laboratório de Sensoriamento e Controle (LASC)",-35.197329,-5.842907],
+    ["LAMP (Laboratório de Automação da Medição em Petróleo)",-35.197363,-5.84348], ["Lanchonete da ECT",-35.198997,-5.84329], ["Lanchonete do Setor 1",-35.199306,-5.837962],
+    ["Lanchonete do Setor 2",-35.197703,-5.840932], ["Lanchonete do Setor 5",-35.198048,-5.838677], ["Lanchonete do Setor de Fisica",-35.196968,-5.841692],
+    ["Lanchonete O Campeão",-35.200222,-5.841803], ["LAUT (Laboratório de Automação em Petróleo)",-35.197268,-5.843236], ["LIsboa",-35.19996,-5.841938],
+    ["Mata dos Saguis",-35.201187,-5.842702], ["Museu de Morfologia",-35.20303,-5.84177], ["NEI UFRN (Núcleo de Educação Infantil)",-35.206028,-5.837053],
+    ["NEPGN (Núcleo de Estudos em Petróleo e Gás Natural)",-35.198686,-5.840307], ["nPITI",-35.197574,-5.842612], ["Núcleo de Estudos e Pesquisas em Ciências Sociais Aplicadas (NEPSA 2)",-35.197389,-5.837927],
+    ["Núcleo de Prática Jurídica (NPJ)",-35.200188,-5.837498], ["Núcleo de Yoga",-35.201761,-5.834182], ["Núcleo Temático da Seca (NutSeca)",-35.199643,-5.838325],
+    ["NUPEG - PRH-ANP 14",-35.195726,-5.842904], ["NUPEG 2",-35.196343,-5.843504], ["NUPLAM (Núcleo de Pesquisa em Alimentos e Medicamentos)",-35.203313,-5.839876],
+    ["NUPPRAR (NUPRAR, Núcleo de Processamento Primário e Reuso de Água Produzida e Resíduos)",-35.199681,-5.841505], ["Oca",-35.199679,-5.841829], ["Paris",-35.200179,-5.837837],
+    ["Pavilhão de Manutenção de Instalações",-35.203588,-5.834908], ["PET - Física",-35.1977,-5.841835], ["Piscina Olímpica",-35.20153,-5.834381],
+    ["POP-RN (Ponto de Presença RN)",-35.199786,-5.839141], ["PPG",-35.201775,-5.840025], ["Praça Cívica da UFRN",-35.21005,-5.837595],
+    ["Praça da Biblioteca",-35.199585,-5.839646], ["Praça do Servidor José Wilson de Souza",-35.202078,-5.83906], ["Praça do Setor V (Praça do Setor 5)",-35.198149,-5.838662],
+    ["Praça Interna do CCHLA",-35.198394,-5.839131], ["PRH",-35.201779,-5.839845], ["PROAD",-35.201778,-5.83989],
+    ["PROAE",-35.201773,-5.84016], ["PROEX",-35.201776,-5.83998], ["PROGRAD",-35.201777,-5.839935],
+    ["PROIN",-35.197507,-5.841833], ["Projeto Pau e Lata",-35.211224,-5.834717], ["PROPESQ",-35.201775,-5.84007],
+    ["PROPLAN",-35.201774,-5.840115], ["Refeitório do Setor 03",-35.200486,-5.841744], ["Reitoria",-35.201657,-5.838654],
+    ["Reservatório R1.01",-35.207927,-5.836781], ["Reservatório R10",-35.199218,-5.838983], ["Reservatório R2.01",-35.202503,-5.841028],
+    ["Reservatório R3.01",-35.19943,-5.843034], ["Reservatório R3.02",-35.196177,-5.841037], ["Reservatório R3.03",-35.197925,-5.842589],
+    ["Reservatório R3.04",-35.200905,-5.841353], ["Reservatório R3.05",-35.199496,-5.841791], ["Reservatório R4.01",-35.198248,-5.838673],
+    ["Reservatório R4.02",-35.200186,-5.837229], ["Reservatório R5.01",-35.20281,-5.83408], ["Residência de Pós-Graduação",-35.202101,-5.836724],
+    ["Residência Universitária",-35.204711,-5.83252], ["Residência Universitária Campus I",-35.204881,-5.832283], ["Residência Universitária Campus II",-35.204537,-5.832369],
+    ["Residência Universitária Campus III",-35.204624,-5.83268], ["Residência Universitária Campus IV",-35.204747,-5.833035], ["Restaurante da APURN",-35.200206,-5.839808],
+    ["Restaurante da Reitoria UFRN",-35.201564,-5.8398], ["Restaurante Nordestino",-35.199766,-5.844027], ["Restaurante Universitário (RU)",-35.203743,-5.833264],
+    ["Rua da Biblioteca",-35.198929,-5.839442], ["Rua da Capela",-35.209599,-5.836969], ["Rua da Convivência",-35.200123,-5.840377],
+    ["Rua da Praça",-35.210594,-5.836024], ["Rua da Reitoria",-35.201024,-5.839537], ["Rua da Saúde",-35.201631,-5.836859],
+    ["Rua da Tecnologia",-35.198464,-5.843005], ["Rua das Artes",-35.210701,-5.835254], ["Rua das Biociências",-35.200818,-5.841832],
+    ["Rua das Engenharias",-35.196649,-5.84206], ["Rua das Exatas",-35.198703,-5.841267], ["Rua das Humanidades",-35.197425,-5.839888],
+    ["Rua das Sociais",-35.199844,-5.838524], ["Rua do Ágora",-35.198016,-5.840905], ["Rua do Esporte",-35.201192,-5.837154],
+    ["Rua do Horto",-35.203497,-5.835787], ["Rua do Meio Ambiente",-35.205073,-5.837488], ["Rua do NUPLAM",-35.204647,-5.839235],
+    ["Rua do Observatório",-35.196645,-5.84129], ["Salão Nordeste",-35.197704,-5.841645], ["Santander",-35.20026,-5.83893],
+    ["Secretaria de Educação à Distância (SEDIS)",-35.208697,-5.836266], ["SEPA UFRN (Serviço de Psicologia Aplicada)",-35.198597,-5.838612], ["Setor 1 (Setor I)",-35.199622,-5.837461],
+    ["Setor 3 (Setor III)",-35.200427,-5.841138], ["Setor 4 (Setor IV)",-35.199852,-5.842456], ["Setor V (Setor 5, Setor de Aulas Teóricas V)",-35.197535,-5.838504],
+    ["Subestação UFRN",-35.200812,-5.843255], ["Superintendência de Informática UFRN (SINFO, Superintendência de Informática)",-35.198682,-5.841486], ["Superintendência de Infraestrutura",-35.203338,-5.834233],
+    ["Unidade de Armazenamento e Tratamento de Resíduos (UATR)",-35.203981,-5.834281]
+];
+
+const searchBox = document.getElementById('search-box');
+const searchToggle = document.getElementById('search-toggle');
+const searchForm = document.getElementById('search-form');
+const searchInput = document.getElementById('search-input');
+const placesList = document.getElementById('ufrn-places-list');
+
+const normalize = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+// Preenche a lista de sugestões (autocomplete) com todos os locais do campus
+placesList.innerHTML = UFRN_PLACES.map(([name]) => `<option value="${escapeHTML(name)}"></option>`).join('');
+
+function findLocalPlace(query) {
+    const q = normalize(query);
+    const tokens = q.split(/\s+/).filter(Boolean);
+    let best = null, bestScore = -1;
+
+    for (const place of UFRN_PLACES) {
+        const nameNorm = normalize(place[0]);
+        if (!tokens.every(t => nameNorm.includes(t))) continue;
+
+        const words = nameNorm.split(/[^a-z0-9]+/);
+        let score = 0;
+        if (nameNorm === q) score += 100;
+        if (nameNorm.startsWith(q)) score += 50;
+        if (words.includes(q)) score += 40;
+        score -= nameNorm.length * 0.1; // prioriza nomes mais diretos (ex: "Setor 1" antes de "Lanchonete do Setor 1")
+
+        if (score > bestScore) {
+            bestScore = score;
+            best = place;
+        }
+    }
+    return best;
+}
+
+searchToggle.addEventListener('click', () => {
+    const isOpen = searchBox.classList.toggle('open');
+    if (isOpen) searchInput.focus();
+});
+
+// Se o usuário clicar numa sugestão do autocomplete, já leva a câmera direto
+searchInput.addEventListener('change', () => {
+    const exact = UFRN_PLACES.find(([name]) => normalize(name) === normalize(searchInput.value.trim()));
+    if (exact) {
+        map.flyTo({ center: [exact[1], exact[2]], zoom: 20, essential: true });
+        showHint(`📍 ${exact[0]}`, true);
+    }
+});
+
+searchForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    // 1) Busca instantânea no catálogo completo de locais da UFRN + avisos criados pelos usuários
+    const localMatch = findLocalPlace(query);
+    if (localMatch) {
+        map.flyTo({ center: [localMatch[1], localMatch[2]], zoom: 20, essential: true });
+        showHint(`📍 ${localMatch[0]}`, true);
+        return;
+    }
+
+    const alertMatch = loadAlerts().find(a => normalize(a.description || '').includes(normalize(query)));
+    if (alertMatch) {
+        map.flyTo({ center: [alertMatch.lng, alertMatch.lat], zoom: 20, essential: true });
+        showHint(`📍 Aviso: ${alertMatch.description}`, true);
+        return;
+    }
+
+    // 2) Fallback: consulta na API do OpenStreetMap sem sufixo restritivo
+    showHint('🔍 Buscando local na UFRN...');
+    try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=10&bounded=1&viewbox=-35.2140,-5.8300,-35.1930,-5.8465&q=${encodeURIComponent(query)}`;
+        const res = await fetch(url);
+        const results = await res.json();
+        const match = results.find(r => isInsideUFRN(Number(r.lon), Number(r.lat))) || results[0];
+
+        if (!match) {
+            showHint('⚠️ Local não encontrado na UFRN.', true);
+            return;
+        }
+
+        map.flyTo({ center: [Number(match.lon), Number(match.lat)], zoom: 20, essential: true });
+        showHint(`📍 ${match.name || match.display_name.split(',')[0]}`, true);
+    } catch (_) {
+        showHint('⚠️ Erro ao pesquisar o local.', true);
+    }
 });

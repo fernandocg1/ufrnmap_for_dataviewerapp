@@ -12,6 +12,14 @@
 <body>
     <div id="map"></div>
     <button id="theme-toggle" title="Alternar tema claro/escuro">☀️ Claro</button>
+    <div id="search-box">
+        <button id="search-toggle" type="button" title="Pesquisar local na UFRN">🔍</button>
+        <form id="search-form">
+            <input id="search-input" type="text" list="ufrn-places-list" placeholder="Buscar local (ex: CCSA, nPITI, Setor 1)..." autocomplete="off" />
+            <datalist id="ufrn-places-list"></datalist>
+            <button type="submit">Ir</button>
+        </form>
+    </div>
     <div id="hint"></div>
 
     <div id="toolbar">
